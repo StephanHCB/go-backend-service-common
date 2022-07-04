@@ -104,6 +104,7 @@ func TestAccessors(t *testing.T) {
 	require.Equal(t, uint16(8081), cut.ServerPort())
 	require.Equal(t, uint16(9091), cut.MetricsPort())
 	require.Equal(t, "dev", cut.Environment())
+	require.Equal(t, "platform", cut.Platform())
 	require.Equal(t, true, cut.PlainLogging())
 	require.Equal(t, "localhost", cut.VaultServer())
 	require.Equal(t, "", cut.VaultCertificateFile())

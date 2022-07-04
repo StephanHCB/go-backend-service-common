@@ -55,6 +55,7 @@ type Configuration interface {
 	MetricsPort() uint16
 
 	Environment() string
+	Platform() string
 
 	PlainLogging() bool
 

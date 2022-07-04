@@ -20,6 +20,7 @@ type ConfigImpl struct {
 	VApplicationName   string
 	VServerAddress     string
 	VEnvironment       string
+	VPlatform          string
 	VLogstyle          string
 	VVaultServer       string
 	VVaultCertFile     string
@@ -75,6 +76,7 @@ func (r *ConfigImpl) ObtainPredefinedValues() {
 	r.VApplicationName = auconfigenv.Get(KeyApplicationName)
 	r.VServerAddress = auconfigenv.Get(KeyServerAddress)
 	r.VEnvironment = auconfigenv.Get(KeyEnvironment)
+	r.VPlatform = auconfigenv.Get(KeyPlatform)
 	r.VLogstyle = auconfigenv.Get(KeyLogstyle)
 	r.VVaultServer = auconfigenv.Get(KeyVaultServer)
 	r.VVaultCertFile = auconfigenv.Get(KeyVaultCertificateFile)

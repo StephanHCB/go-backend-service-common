@@ -26,6 +26,10 @@ func (c *ConfigImpl) Environment() string {
 	return c.VEnvironment
 }
 
+func (c *ConfigImpl) Platform() string {
+	return c.VPlatform
+}
+
 func (c *ConfigImpl) PlainLogging() bool {
 	return c.VLogstyle == "plain"
 }
