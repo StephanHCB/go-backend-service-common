@@ -1,0 +1,14 @@
+APPLICATION_NAME: room-service
+SERVER_ADDRESS: '192.168.150.0'
+SERVER_PORT: '8081'
+METRICS_PORT: '9091'
+ENVIRONMENT: dev
+PLATFORM: platform
+LOGSTYLE: plain
+VAULT_SERVER: localhost
+VAULT_SECRET_PATH: room-service/secrets
+LOCAL_VAULT_TOKEN: 'not a real token'
+VAULT_KUBERNETES_ROLE: 'platform_microservice_role_room-service_prod'
+VAULT_KUBERNETES_TOKEN_PATH: '/some/thing'
+VAULT_KUBERNETES_BACKEND: 'k8s-dev-something'
+MY_CUSTOM_FIELD: kitty

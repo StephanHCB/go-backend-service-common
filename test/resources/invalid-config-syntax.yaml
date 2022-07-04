@@ -1,0 +1,4 @@
+APPLICATION_NAME: demo-backend
+  - some invalid syntax stuff
+- blah
+

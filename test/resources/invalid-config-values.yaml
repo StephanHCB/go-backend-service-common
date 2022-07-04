@@ -1,0 +1,10 @@
+APPLICATION_NAME: 'rm -rf something'
+SERVER_ADDRESS: 'Total Nonsense'
+SERVER_PORT: '122834'
+METRICS_PORT: '-12387192873invalid'
+ENVIRONMENT: mars
+# have to set this valid or test can't run
+LOGSTYLE: plain
+VAULT_SERVER: https://something
+VAULT_SECRET_PATH: app-bff/secrets
+LOCAL_VAULT_TOKEN: 'not a real token'
