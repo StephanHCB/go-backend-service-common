@@ -72,6 +72,13 @@ func (r *ConfigImpl) Validate(ctx context.Context) error {
 	return auconfigenv.Validate()
 }
 
+func (r *ConfigImpl) ObtainValuesNeededForLogging() {
+	r.VApplicationName = auconfigenv.Get(KeyApplicationName)
+	r.VEnvironment = auconfigenv.Get(KeyEnvironment)
+	r.VPlatform = auconfigenv.Get(KeyPlatform)
+	r.VLogstyle = auconfigenv.Get(KeyLogstyle)
+}
+
 func (r *ConfigImpl) ObtainPredefinedValues() {
 	r.VApplicationName = auconfigenv.Get(KeyApplicationName)
 	r.VServerAddress = auconfigenv.Get(KeyServerAddress)

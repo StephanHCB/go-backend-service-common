@@ -32,6 +32,9 @@ func (r *ConfigImpl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 
+	// make unvalidated configuration values available for logging setup
+	r.ObtainValuesNeededForLogging()
+
 	return nil
 }
 
