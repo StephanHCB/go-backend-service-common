@@ -9,6 +9,8 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
 	"github.com/go-chi/chi/v5/middleware"
 	"net/http"
+	"reflect"
+	"strings"
 	"time"
 )
 
@@ -25,6 +27,7 @@ const (
 	StatusCodeFieldName            = "http.response.status_code"
 	UserAgentFieldName             = "user_agent.original"
 	ResponseLatencyMicrosFieldName = "event.duration"
+	LoggerNameFieldName            = "log.logger"
 )
 
 func (l *zerologLogFormatter) NewLogEntry(r *http.Request) middleware.LogEntry {
@@ -71,12 +74,18 @@ func (l *zerologLogEntry) Write(status, bytes int, header http.Header, elapsed t
 		e.With(StatusCodeFieldName, fmt.Sprintf("%d", status)).
 			With(ResponseLatencyMicrosFieldName, fmt.Sprintf("%d", elapsed.Microseconds())).
 			With(UserAgentFieldName, l.userAgent).
+			With(LoggerNameFieldName, l.pkgName()).
 			Print(msg)
 	} else {
 		// console friendly version
 		msg = fmt.Sprintf("request %s %s -> %d (%d μs)", l.method, l.path, status, elapsed.Microseconds())
 		e.Print(msg)
 	}
+}
+
+func (l *zerologLogEntry) pkgName() string {
+	pkgPathParts := strings.Split(reflect.TypeOf(*l).PkgPath(), "/")
+	return pkgPathParts[len(pkgPathParts)-1]
 }
 
 func (l *zerologLogEntry) Panic(v interface{}, stack []byte) {
