@@ -25,6 +25,7 @@ const (
 	StatusCodeFieldName            = "http.response.status_code"
 	UserAgentFieldName             = "user_agent.original"
 	ResponseLatencyMicrosFieldName = "event.duration"
+	LoggerNameFieldName            = "log.logger"
 )
 
 func (l *zerologLogFormatter) NewLogEntry(r *http.Request) middleware.LogEntry {
@@ -59,8 +60,6 @@ func (l *zerologLogEntry) Write(status, bytes int, header http.Header, elapsed t
 	ctxLogger := aulogging.Logger.Ctx(l.request.Context())
 	var e auloggingapi.LeveledLoggingImplementation
 	switch {
-	case status >= http.StatusBadRequest && status < http.StatusInternalServerError:
-		e = ctxLogger.Warn()
 	case status >= http.StatusInternalServerError:
 		e = ctxLogger.Error()
 	default:
@@ -71,6 +70,7 @@ func (l *zerologLogEntry) Write(status, bytes int, header http.Header, elapsed t
 		e.With(StatusCodeFieldName, fmt.Sprintf("%d", status)).
 			With(ResponseLatencyMicrosFieldName, fmt.Sprintf("%d", elapsed.Microseconds())).
 			With(UserAgentFieldName, l.userAgent).
+			With(LoggerNameFieldName, "request.incoming").
 			Print(msg)
 	} else {
 		// console friendly version
