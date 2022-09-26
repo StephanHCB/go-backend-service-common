@@ -2,7 +2,9 @@ package swaggerctl
 
 import (
 	"context"
+	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auwebswaggerui "github.com/StephanHCB/go-autumn-web-swagger-ui"
+	"github.com/StephanHCB/go-backend-service-common/web/util/media"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-http-utils/headers"
 	"net/http"
@@ -54,9 +56,13 @@ func (c *SwaggerCtlImpl) AddStaticHttpFilesystemRoute(server chi.Router, fs http
 //   That's why we have the redirect.
 func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFilesystemPath string, filename string, uriPath string) {
 	workDir, _ := os.Getwd()
-	filesDir := filepath.Join(workDir, relativeFilesystemPath)
-	root := http.Dir(filesDir)
-	fs := http.FileServer(root)
+	filePath := filepath.Join(workDir, relativeFilesystemPath, filename)
+
+	contents, err := os.ReadFile(filePath)
+	if err != nil {
+		aulogging.Logger.NoCtx().Error().WithErr(err).Printf("failed to read file %s - skipping: %s", filePath, err.Error())
+		return
+	}
 
 	if hasNoTrailingSlash(uriPath) {
 		uriPath += "/"
@@ -65,7 +71,8 @@ func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFil
 	server.Get(uriPath+filename, func(w http.ResponseWriter, r *http.Request) {
 		// this stops browsers from caching our swagger.json
 		w.Header().Set(headers.CacheControl, "no-cache")
-		fs.ServeHTTP(w, r)
+		w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
+		_, _ = w.Write(contents)
 	})
 }
 
