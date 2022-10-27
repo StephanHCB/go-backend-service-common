@@ -18,6 +18,9 @@ const RequestIDKey ctxKeyRequestID = 0
 // Exported so that it can be changed by developers
 var RequestIDHeader = "X-Request-Id"
 
+// NewRequestIDFunc allows overriding the generator function for a new request id.
+var NewRequestIDFunc = NewRequestID
+
 // RequestID is a middleware that injects a request ID into the context of each
 // request. A request ID is a string of the form "host.example.com/random-0001",
 // where "random" is a base62 random string that uniquely identifies this go
@@ -28,7 +31,7 @@ func RequestID(next http.Handler) http.Handler {
 		ctx := r.Context()
 		requestID := r.Header.Get(RequestIDHeader)
 		if requestID == "" {
-			requestID = NewRequestID()
+			requestID = NewRequestIDFunc()
 		}
 		ctx = PutReqID(ctx, requestID)
 		next.ServeHTTP(w, r.WithContext(ctx))
