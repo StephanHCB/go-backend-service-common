@@ -15,7 +15,7 @@ require (
 	github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
-	github.com/prometheus/client_golang v1.13.0
+	github.com/prometheus/client_golang v1.14.0
 	github.com/rs/zerolog v1.29.0
 	github.com/stretchr/testify v1.8.1
 )
@@ -29,7 +29,7 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_model v0.2.0 // indirect
+	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
