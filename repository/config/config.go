@@ -28,6 +28,14 @@ const (
 	KeyVaultKubernetesTokenPath = "VAULT_KUBERNETES_TOKEN_PATH"
 	KeyVaultKubernetesBackend   = "VAULT_KUBERNETES_BACKEND"
 	KeyCorsAllowOrigin          = "CORS_ALLOW_ORIGIN"
+
+	// TODO this introduces some duplicates - clear up which ones to deprecate (we need to keep them for backwards compatibility)
+	KeyVaultEnabled                 = "VAULT_ENABLED"
+	KeyVaultAuthToken               = "VAULT_AUTH_TOKEN"
+	KeyVaultAuthKubernetesRole      = "VAULT_AUTH_KUBERNETES_ROLE"
+	KeyVaultAuthKubernetesTokenPath = "VAULT_AUTH_KUBERNETES_TOKEN_PATH"
+	KeyVaultAuthKubernetesBackend   = "VAULT_AUTH_KUBERNETES_BACKEND"
+	KeyVaultSecretsConfig           = "VAULT_SECRETS_CONFIG"
 )
 
 // PredefinedConfigItems is exposed so you can customize it.
