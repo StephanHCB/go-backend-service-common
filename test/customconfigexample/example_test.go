@@ -76,7 +76,7 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 
 	_, err := tstSetupCutAndLogRecorder(t, "invalid-config-values.yaml")
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 7 error(s). See details above")
+	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 8 error(s). See details above")
 
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 
@@ -88,6 +88,9 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 
 	expectedPart3 := "METRICS_PORT: value -12387192873invalid is not a valid integer"
 	require.Contains(t, actualLog, expectedPart3)
+
+	expectedPart4 := "\"message\":\"failed to validate configuration field CORS_ALLOW_ORIGIN: must match ^(|https?://.*)$"
+	require.Contains(t, actualLog, expectedPart4)
 }
 
 func TestAccessors(t *testing.T) {
@@ -114,6 +117,7 @@ func TestAccessors(t *testing.T) {
 	require.Equal(t, "platform_microservice_role_room-service_prod", cut.VaultKubernetesRole())
 	require.Equal(t, "/some/thing", cut.VaultKubernetesTokenPath())
 	require.Equal(t, "k8s-dev-something", cut.VaultKubernetesBackend())
+	require.Equal(t, "http://localhost:12345", cut.CorsAllowOrigin())
 
 	require.Equal(t, "kitty", cut.Custom().(CustomConfigurationWithOneField).MyCustomField())
 }

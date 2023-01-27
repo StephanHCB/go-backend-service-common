@@ -29,6 +29,7 @@ type ConfigImpl struct {
 	VVaultK8sRole      string
 	VVaultK8sTokenPath string
 	VVaultK8sBackend   string
+	VCorsAllowOrigin   string
 
 	VServerPortValue  uint16
 	VMetricsPortValue uint16
@@ -92,6 +93,7 @@ func (r *ConfigImpl) ObtainPredefinedValues() {
 	r.VVaultK8sRole = auconfigenv.Get(KeyVaultKubernetesRole)
 	r.VVaultK8sTokenPath = auconfigenv.Get(KeyVaultKubernetesTokenPath)
 	r.VVaultK8sBackend = auconfigenv.Get(KeyVaultKubernetesBackend)
+	r.VCorsAllowOrigin = auconfigenv.Get(KeyCorsAllowOrigin)
 
 	// after validate, these cannot fail any more
 	vServerPortValue, _ := auconfigenv.AToUint(auconfigenv.Get(KeyServerPort))

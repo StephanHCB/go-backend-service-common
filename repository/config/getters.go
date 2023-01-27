@@ -65,3 +65,7 @@ func (c *ConfigImpl) VaultKubernetesTokenPath() string {
 func (c *ConfigImpl) VaultKubernetesBackend() string {
 	return c.VVaultK8sBackend
 }
+
+func (c *ConfigImpl) CorsAllowOrigin() string {
+	return c.VCorsAllowOrigin
+}

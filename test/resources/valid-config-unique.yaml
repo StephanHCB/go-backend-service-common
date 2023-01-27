@@ -12,3 +12,4 @@ VAULT_KUBERNETES_ROLE: 'platform_microservice_role_room-service_prod'
 VAULT_KUBERNETES_TOKEN_PATH: '/some/thing'
 VAULT_KUBERNETES_BACKEND: 'k8s-dev-something'
 MY_CUSTOM_FIELD: kitty
+CORS_ALLOW_ORIGIN: 'http://localhost:12345'
