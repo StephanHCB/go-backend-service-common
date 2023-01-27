@@ -7,7 +7,7 @@ go 1.17
 exclude github.com/prometheus/client_golang v1.11.0
 
 require (
-	github.com/StephanHCB/go-autumn-acorn-registry v0.2.0
+	github.com/StephanHCB/go-autumn-acorn-registry v0.3.1
 	github.com/StephanHCB/go-autumn-config-api v0.2.1
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
 	github.com/StephanHCB/go-autumn-logging v0.3.0
