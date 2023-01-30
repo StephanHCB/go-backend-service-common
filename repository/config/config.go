@@ -27,6 +27,7 @@ const (
 	KeyVaultKubernetesRole      = "VAULT_KUBERNETES_ROLE"
 	KeyVaultKubernetesTokenPath = "VAULT_KUBERNETES_TOKEN_PATH"
 	KeyVaultKubernetesBackend   = "VAULT_KUBERNETES_BACKEND"
+	KeyCorsAllowOrigin          = "CORS_ALLOW_ORIGIN"
 )
 
 // PredefinedConfigItems is exposed so you can customize it.
@@ -124,5 +125,11 @@ var PredefinedConfigItems = []auconfigapi.ConfigItem{
 		Default:     "",
 		Description: "role binding to use for vault kubernetes authentication, usually <PLATFORM>_microservice_role_<APPNAME>_<ENVIRONMENT>",
 		Validate:    auconfigenv.ObtainPatternValidator("^(|k8s-[a-z-]+|aks-[a-z-]+)$"),
+	}, {
+		Key:         KeyCorsAllowOrigin,
+		EnvName:     KeyCorsAllowOrigin,
+		Default:     "",
+		Description: "setting this enables sending headers to reduce CORS protections. Not usually suitable for production. Leave blank to not disable CORS. Note that this needs to be a single http(s) base URL, or else credentials forwarding will be refused by modern browsers. If you don't need credentials, this can be a comma separated list. Typical example value: 'http://localhost:8000/'",
+		Validate:    auconfigenv.ObtainPatternValidator("^(|https?://.*)$"),
 	},
 }

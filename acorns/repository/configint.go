@@ -69,4 +69,6 @@ type Configuration interface {
 	VaultKubernetesRole() string
 	VaultKubernetesTokenPath() string
 	VaultKubernetesBackend() string
+
+	CorsAllowOrigin() string
 }

@@ -8,3 +8,4 @@ LOGSTYLE: plain
 VAULT_SERVER: https://something
 VAULT_SECRET_PATH: app-bff/secrets
 LOCAL_VAULT_TOKEN: 'not a real token'
+CORS_ALLOW_ORIGIN: 'this one does not start with http'
