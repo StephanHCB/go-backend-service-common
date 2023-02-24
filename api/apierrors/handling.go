@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
+	"github.com/StephanHCB/go-backend-service-common/api"
 	"github.com/StephanHCB/go-backend-service-common/web/util/media"
 	"github.com/go-http-utils/headers"
 	"net/http"
+	"time"
 )
 
 // HandleError is a common error handler for all errors declared in this package.
@@ -22,7 +24,10 @@ func HandleError(ctx context.Context, w http.ResponseWriter, r *http.Request, er
 		for _, typeCheck := range expectedTypes {
 			if typeCheck(err) {
 				msg := annotatedError.ApiError().Message
-				errorHandler(ctx, w, r, *annotatedError.ApiError().ErrorCode, *msg)
+				details := annotatedError.ApiError().Details
+				timestamp := annotatedError.ApiError().Timestamp
+				responseObject := annotatedError.ResponseObject()
+				errorHandler(ctx, w, r, annotatedError.HttpStatus(), *msg, *details, responseObject, *timestamp)
 				return
 			}
 		}
@@ -33,17 +38,20 @@ func HandleError(ctx context.Context, w http.ResponseWriter, r *http.Request, er
 
 func unexpectedErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 	aulogging.Logger.Ctx(ctx).Error().WithErr(err).Printf("unexpected error")
-	errorHandler(ctx, w, r, http.StatusInternalServerError, err.Error())
+	errorHandler(ctx, w, r, http.StatusInternalServerError, err.Error(), "unexpected error", nil, time.Now())
 }
 
-func errorHandler(ctx context.Context, w http.ResponseWriter, _ *http.Request, status int32, details string) {
-	response := ApiErrorV2{
-		ErrorCode: &status,
-		Message:   &details,
+func errorHandler(ctx context.Context, w http.ResponseWriter, _ *http.Request, status int, msg string, details string, response any, timestamp time.Time) {
+	if response == nil {
+		response = api.ErrorDto{
+			Message:   &msg,
+			Details:   &details,
+			Timestamp: &timestamp,
+		}
 	}
 
 	w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
-	w.WriteHeader(int(status))
+	w.WriteHeader(status)
 	writeJson(ctx, w, response)
 }
 
