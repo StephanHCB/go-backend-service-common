@@ -1,6 +1,6 @@
 module github.com/StephanHCB/go-backend-service-common
 
-go 1.17
+go 1.18
 
 // enforce some security updates so our scanner doesn't complain about code that the
 // go dependency resolution system will not actually include in the end result anyway

@@ -1,9 +1,19 @@
 package apierrors
 
+import (
+	"github.com/StephanHCB/go-backend-service-common/api"
+	"time"
+)
+
 type AnnotatedErrorImpl struct {
-	VApiError   ApiErrorV2
-	VHttpStatus int
-	VWrapped    error
+	VApiError       api.ErrorDto
+	VResponseObject any
+	VHttpStatus     int
+	VWrapped        error
+}
+
+func (e *AnnotatedErrorImpl) ResponseObject() any {
+	return e.VResponseObject
 }
 
 //goland:noinspection GoUnusedFunction
@@ -18,7 +28,7 @@ func (e *AnnotatedErrorImpl) Error() string {
 	return *e.VApiError.Message
 }
 
-func (e *AnnotatedErrorImpl) ApiError() ApiErrorV2 {
+func (e *AnnotatedErrorImpl) ApiError() api.ErrorDto {
 	return e.VApiError
 }
 
@@ -30,15 +40,28 @@ func (e *AnnotatedErrorImpl) Wrapped() error {
 	return e.VWrapped
 }
 
-func create(message string, status int, wrapped error) AnnotatedError {
-	errCode := int32(status)
+func create(message string, details string, status int, wrapped error, timestamp time.Time) AnnotatedError {
 	return &AnnotatedErrorImpl{
-		VApiError: ApiErrorV2{
-			ErrorCode: &errCode,
+		VApiError: api.ErrorDto{
+			Details:   &details,
 			Message:   &message,
+			Timestamp: &timestamp,
 		},
 		VHttpStatus: status,
 		VWrapped:    wrapped,
+	}
+}
+
+func createWithResponse(message string, details string, status int, wrapped error, response any, timestamp time.Time) AnnotatedError {
+	return &AnnotatedErrorImpl{
+		VApiError: api.ErrorDto{
+			Details:   &details,
+			Message:   &message,
+			Timestamp: &timestamp,
+		},
+		VResponseObject: response,
+		VHttpStatus:     status,
+		VWrapped:        wrapped,
 	}
 }
 
