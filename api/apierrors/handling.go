@@ -27,7 +27,7 @@ func HandleError(ctx context.Context, w http.ResponseWriter, r *http.Request, er
 				details := annotatedError.ApiError().Details
 				timestamp := annotatedError.ApiError().Timestamp
 				responseObject := annotatedError.ResponseObject()
-				errorHandler(ctx, w, r, annotatedError.HttpStatus(), *msg, *details, responseObject, *timestamp)
+				ErrorHandler(ctx, w, r, annotatedError.HttpStatus(), *msg, *details, responseObject, *timestamp)
 				return
 			}
 		}
@@ -38,10 +38,10 @@ func HandleError(ctx context.Context, w http.ResponseWriter, r *http.Request, er
 
 func unexpectedErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 	aulogging.Logger.Ctx(ctx).Error().WithErr(err).Printf("unexpected error")
-	errorHandler(ctx, w, r, http.StatusInternalServerError, err.Error(), "unexpected error", nil, time.Now())
+	ErrorHandler(ctx, w, r, http.StatusInternalServerError, err.Error(), "unexpected error", nil, time.Now())
 }
 
-func errorHandler(ctx context.Context, w http.ResponseWriter, _ *http.Request, status int, msg string, details string, response any, timestamp time.Time) {
+func ErrorHandler(ctx context.Context, w http.ResponseWriter, _ *http.Request, status int, msg string, details string, response any, timestamp time.Time) {
 	if response == nil {
 		response = api.ErrorDto{
 			Message:   &msg,

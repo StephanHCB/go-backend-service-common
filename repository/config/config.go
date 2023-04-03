@@ -28,6 +28,15 @@ const (
 	KeyVaultKubernetesTokenPath = "VAULT_KUBERNETES_TOKEN_PATH"
 	KeyVaultKubernetesBackend   = "VAULT_KUBERNETES_BACKEND"
 	KeyCorsAllowOrigin          = "CORS_ALLOW_ORIGIN"
+	KeyAuthOidcKeySetUrl        = "AUTH_OIDC_KEY_SET_URL"
+	KeyAuthOidcTokenAudience    = "AUTH_OIDC_TOKEN_AUDIENCE"
+	KeyAuthGroupWrite           = "AUTH_GROUP_WRITE"
+	KeyAuthGroupAdmin           = "AUTH_GROUP_ADMIN"
+	KeyAuthBasicUserGroup       = "AUTH_BASIC_USER_GROUP"
+	KeyBasicAuthUsername        = "BASIC_AUTH_USERNAME"
+	KeyBasicAuthPassword        = "BASIC_AUTH_PASSWORD"
+	KeyAuthorName               = "AUTHOR_NAME"
+	KeyAuthorEmail              = "AUTHOR_EMAIL"
 )
 
 // PredefinedConfigItems is exposed so you can customize it.

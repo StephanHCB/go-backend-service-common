@@ -8,6 +8,7 @@ This library provides:
 
 - read and validate **configuration** from environment variables (and from a file on localhost)
 - json **logging** (and human readable plaintext on localhost)
+- a **identity provider** client
 - a **health** controller
 - a controller for serving a bundled **swagger ui** and an openapi v3 spec
 - **middlewares** for
@@ -17,6 +18,7 @@ This library provides:
   - incoming request metrics
   - incoming request timeouts
   - panic recovery
+  - json web token validator
 
 It aims to be compatible with a typical Spring microservice:
 
