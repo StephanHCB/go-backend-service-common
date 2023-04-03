@@ -13,23 +13,36 @@ import (
 var ApplicationName = "set-this-from-your-application"
 
 const (
-	KeyApplicationName          = "APPLICATION_NAME"
-	KeyServerAddress            = "SERVER_ADDRESS"
-	KeyServerPort               = "SERVER_PORT"
-	KeyMetricsPort              = "METRICS_PORT"
-	KeyEnvironment              = "ENVIRONMENT"
-	KeyPlatform                 = "PLATFORM"
-	KeyLogstyle                 = "LOGSTYLE"
-	KeyVaultServer              = "VAULT_SERVER"
-	KeyVaultCertificateFile     = "VAULT_CERTIFICATE_FILE"
-	KeyVaultSecretPath          = "VAULT_SECRET_PATH"
-	KeyLocalVaultToken          = "LOCAL_VAULT_TOKEN"
-	KeyVaultKubernetesRole      = "VAULT_KUBERNETES_ROLE"
+	KeyApplicationName      = "APPLICATION_NAME"
+	KeyServerAddress        = "SERVER_ADDRESS"
+	KeyServerPort           = "SERVER_PORT"
+	KeyMetricsPort          = "METRICS_PORT"
+	KeyEnvironment          = "ENVIRONMENT"
+	KeyPlatform             = "PLATFORM"
+	KeyLogstyle             = "LOGSTYLE"
+	KeyVaultServer          = "VAULT_SERVER"
+	KeyVaultCertificateFile = "VAULT_CERTIFICATE_FILE"
+	// KeyVaultSecretPath deprecated please migrate to KeyVaultSecretsConfig
+	//
+	// example for a migrated config.yaml
+	// VAULT_SECRETS_CONFIG: >-
+	//   {
+	//     "<path to secrets in vault>": [
+	//       {"vaultKey": "<key of secret>"},
+	//       {"vaultKey": "<key of secret>", "configKey": "<if code uses a different config key then key of the secret in vault>"}
+	//     ]
+	//   }
+	KeyVaultSecretPath = "VAULT_SECRET_PATH"
+	// KeyLocalVaultToken deprecated please use KeyVaultAuthToken
+	KeyLocalVaultToken = "LOCAL_VAULT_TOKEN"
+	// KeyVaultKubernetesRole deprecated please use KeyVaultAuthKubernetesRole
+	KeyVaultKubernetesRole = "VAULT_KUBERNETES_ROLE"
+	// KeyVaultKubernetesTokenPath deprecated please use KeyVaultAuthKubernetesTokenPath
 	KeyVaultKubernetesTokenPath = "VAULT_KUBERNETES_TOKEN_PATH"
-	KeyVaultKubernetesBackend   = "VAULT_KUBERNETES_BACKEND"
-	KeyCorsAllowOrigin          = "CORS_ALLOW_ORIGIN"
+	// KeyVaultKubernetesBackend deprecated please use KeyVaultAuthKubernetesBackend
+	KeyVaultKubernetesBackend = "VAULT_KUBERNETES_BACKEND"
+	KeyCorsAllowOrigin        = "CORS_ALLOW_ORIGIN"
 
-	// TODO this introduces some duplicates - clear up which ones to deprecate (we need to keep them for backwards compatibility)
 	KeyVaultEnabled                 = "VAULT_ENABLED"
 	KeyVaultAuthToken               = "VAULT_AUTH_TOKEN"
 	KeyVaultAuthKubernetesRole      = "VAULT_AUTH_KUBERNETES_ROLE"

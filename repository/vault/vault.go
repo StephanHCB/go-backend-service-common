@@ -35,6 +35,19 @@ type Impl struct {
 func (v *Impl) Setup(ctx context.Context) error {
 	v.Logging.Logger().Ctx(ctx).Info().Print("setting up vault")
 
+	if v.VaultAuthToken == "" && v.Configuration.LocalVaultToken() != "" {
+		v.VaultAuthToken = v.Configuration.LocalVaultToken()
+	}
+	if v.VaultAuthKubernetesRole == "" && v.Configuration.VaultKubernetesRole() != "" {
+		v.VaultAuthKubernetesRole = v.Configuration.VaultKubernetesRole()
+	}
+	if v.VaultAuthKubernetesTokenPath == "" && v.Configuration.VaultKubernetesTokenPath() != "" {
+		v.VaultAuthKubernetesTokenPath = v.Configuration.VaultKubernetesTokenPath()
+	}
+	if v.VaultAuthKubernetesBackend == "" && v.Configuration.VaultKubernetesBackend() != "" {
+		v.VaultAuthKubernetesBackend = v.Configuration.VaultKubernetesBackend()
+	}
+
 	publicCertBytes, err := v.publicCertOrNil()
 	if err != nil {
 		return err

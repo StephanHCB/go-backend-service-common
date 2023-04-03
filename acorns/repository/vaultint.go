@@ -20,10 +20,6 @@ type Vault interface {
 	ObtainSecrets(ctx context.Context) error
 }
 
-type VaultConfiguration interface {
-	// TODO why is this here? empty interfaces don't do anything useful, they're the same as interface{}
-}
-
 type VaultSecretsConfig map[string][]VaultSecretConfig
 
 type VaultSecretConfig struct {
