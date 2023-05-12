@@ -73,7 +73,7 @@ func (l *LoggingImpl) CustomSetupJsonLogging(serviceName string) {
 	zerolog.LevelPanicValue = "FATAL"
 
 	zerolog.TimestampFunc = func() time.Time { return time.Now().UTC() }
-	zerolog.TimeFieldFormat = "2006-01-02T15:04:05Z"
+	zerolog.TimeFieldFormat = "2006-01-02T15:04:05.000Z"
 
 	auzerolog.IsJson = true
 }
