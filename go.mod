@@ -12,36 +12,33 @@ require (
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
 	github.com/StephanHCB/go-autumn-logging v0.3.0
 	github.com/StephanHCB/go-autumn-logging-zerolog v0.3.1
+	github.com/StephanHCB/go-autumn-restclient v0.5.0
+	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
 	github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
+	github.com/pact-foundation/pact-go v1.7.0
 	github.com/prometheus/client_golang v1.14.0
 	github.com/rs/zerolog v1.29.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.4
 )
 
 require (
-	github.com/StephanHCB/go-autumn-restclient v0.5.0 // indirect
-	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/go-version v1.5.0 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/pact-foundation/pact-go v1.7.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
-	github.com/spf13/cobra v1.1.3 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tidwall/tinylru v1.1.0 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
