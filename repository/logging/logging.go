@@ -4,6 +4,7 @@ import (
 	"context"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
+	"github.com/StephanHCB/go-autumn-logging-zerolog/loggermiddleware"
 	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
 	"github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
@@ -39,6 +40,8 @@ func (l *LoggingImpl) Setup() {
 	if l.Configuration.PlainLogging() {
 		aulogging.DefaultRequestIdValue = "00000000"
 		auzerolog.RequestIdFieldName = "trace.id"
+		// keep these two consistent, if they do not match, the default request id shows in the logs rather than the APM trace IDs
+		loggermiddleware.RequestIdFieldName = auzerolog.RequestIdFieldName
 		auzerolog.SetupPlaintextLogging()
 		aulogging.Logger.NoCtx().Info().Print("switching to developer friendly console log")
 	} else {
