@@ -33,11 +33,11 @@ func BasicAuthValidatorMiddleware(options BasicAuthMiddlewareOptions) func(http.
 				username, password, basicAuthOk := r.BasicAuth()
 				if basicAuthOk {
 					if checkBasicAuthValue(username, password, options) {
-						adminClaims := AllClaims{
+						specifiedClaims := AllClaims{
 							RegisteredClaims: jwt.RegisteredClaims{},
 							CustomClaims:     options.BasicAuthClaims,
 						}
-						ctx = PutClaims(ctx, &adminClaims)
+						ctx = PutClaims(ctx, &specifiedClaims)
 						next.ServeHTTP(w, r.WithContext(ctx))
 					} else {
 						unauthorizedErrorHandler(ctx, w, r, "Authorization failed Basic Auth", Now())

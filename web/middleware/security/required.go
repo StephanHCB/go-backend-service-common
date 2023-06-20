@@ -19,8 +19,14 @@ func AuthRequiredMiddleware(options AuthRequiredMiddlewareOptions) func(http.Han
 	mw := func(next http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
-			actualRequest := fmt.Sprintf("%s %s", r.Method, r.URL.Path)
 
+			claims := GetClaims(ctx)
+			if claims != nil {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			actualRequest := fmt.Sprintf("%s %s", r.Method, r.URL.Path)
 			allowThrough := false
 			for _, globPattern := range options.AllowUnauthorized {
 				matched, err := filepath.Match(globPattern, actualRequest)
@@ -33,12 +39,12 @@ func AuthRequiredMiddleware(options AuthRequiredMiddlewareOptions) func(http.Han
 				}
 			}
 
-			claims := GetClaims(ctx)
-			if claims == nil && !allowThrough {
-				unauthorizedErrorHandler(ctx, w, r, "Authorization required", Now())
+			if allowThrough {
+				next.ServeHTTP(w, r)
+				return
 			}
 
-			next.ServeHTTP(w, r)
+			unauthorizedErrorHandler(ctx, w, r, "Authorization required", Now())
 		}
 		return http.HandlerFunc(fn)
 	}
