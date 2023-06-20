@@ -68,7 +68,7 @@ func tstConstructRequiredHandlerUnderTest(t *testing.T, wentThrough *bool) http.
 	})
 
 	options := AuthRequiredMiddlewareOptions{
-		AllowUnauthorized: []string{"GET /v2/*", "POST /v17/*/allowed"},
+		AllowUnauthorized: []string{"GET /v2/.*", "POST /v17/.*/allowed"},
 	}
 	middlewareUnderTest := AuthRequiredMiddleware(options)
 

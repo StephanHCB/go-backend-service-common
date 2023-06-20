@@ -45,7 +45,11 @@ type MiddlewareStackOptions struct {
 	DisableSecurityEnforcement bool
 	// AllowUnauthorized is the explicit list of method + url path combinations that allow unauthorized access.
 	//
-	// examples: "PUT /v1/info", "GET /swagger-ui/*" (* glob supported)
+	// We perform a regular expression match against the capitalized HTTP method, followed by 1 space,
+	// followed by the absolute URL path. Start and end markers are added to the regexp under the hood, so
+	// the example actually matches against "^PUT /v1/info$". Regexp quoting rules apply as usual.
+	//
+	// examples: "PUT /v1/info", "GET /swagger-ui.*" (regexp supported)
 	AllowUnauthorized []string
 }
 
