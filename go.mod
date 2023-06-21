@@ -12,7 +12,7 @@ require (
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
 	github.com/StephanHCB/go-autumn-logging v0.3.0
 	github.com/StephanHCB/go-autumn-logging-zerolog v0.5.0
-	github.com/StephanHCB/go-autumn-restclient v0.5.0
+	github.com/StephanHCB/go-autumn-restclient v0.6.0
 	github.com/StephanHCB/go-autumn-restclient-apm v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
 	github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3
@@ -48,7 +48,7 @@ require (
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
-	github.com/tidwall/tinylru v1.1.0 // indirect
+	github.com/tidwall/tinylru v1.2.1 // indirect
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.2 // indirect
 	go.elastic.co/apm/v2 v2.4.2 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
