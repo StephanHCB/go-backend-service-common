@@ -51,6 +51,11 @@ type MiddlewareStackOptions struct {
 	//
 	// examples: "PUT /v1/info", "GET /swagger-ui.*" (regexp supported)
 	AllowUnauthorized []string
+
+	// SkipDuplicateSetup must be set to true if you are trying to set up a second middleware stack
+	//
+	// Some setup cannot be run multiple times, e.g. metrics registration panics on duplicates
+	SkipDuplicateSetup bool
 }
 
 func SetupStandardMiddlewareStack(ctx context.Context, router chi.Router, options MiddlewareStackOptions) error {
@@ -63,8 +68,13 @@ func SetupStandardMiddlewareStack(ctx context.Context, router chi.Router, option
 		ElasticApmEnabled: options.ElasticApmEnabled,
 		PlainLogging:      options.PlainLogging,
 	}
-	tracingMiddleware := apmtracing.BuildApmMiddleware(ctx, tracingOptions)
-	router.Use(tracingMiddleware)
+	if options.SkipDuplicateSetup {
+		tracingMiddleware := apmtracing.GetApmMiddlewareAfterSetup(ctx, tracingOptions)
+		router.Use(tracingMiddleware)
+	} else {
+		tracingMiddleware := apmtracing.BuildApmMiddleware(ctx, tracingOptions)
+		router.Use(tracingMiddleware)
+	}
 	router.Use(cancellogger.ConstructContextCancellationLoggerMiddleware("ElasticApm"))
 
 	loggerOptions := apmtracing.ConfigureContextLoggingForApm(ctx, tracingOptions)
@@ -73,7 +83,9 @@ func SetupStandardMiddlewareStack(ctx context.Context, router chi.Router, option
 	router.Use(loggermiddleware.AddZerologLoggerToContextMiddleware(loggerOptions))
 	router.Use(cancellogger.ConstructContextCancellationLoggerMiddleware("AddZerologLogger"))
 
-	requestlogging.Setup()
+	if !options.SkipDuplicateSetup {
+		requestlogging.Setup()
+	}
 	router.Use(chimiddleware.Logger)
 	router.Use(cancellogger.ConstructContextCancellationLoggerMiddleware("Logger"))
 
@@ -89,7 +101,9 @@ func SetupStandardMiddlewareStack(ctx context.Context, router chi.Router, option
 	router.Use(corsheader.CorsHandlingWithCorsAllowOrigin(options.CorsAllowOrigin))
 	router.Use(cancellogger.ConstructContextCancellationLoggerMiddleware("CorsHandling"))
 
-	requestmetrics.Setup()
+	if !options.SkipDuplicateSetup {
+		requestmetrics.Setup() // panics if called twice
+	}
 	router.Use(requestmetrics.RecordRequestMetrics)
 	router.Use(cancellogger.ConstructContextCancellationLoggerMiddleware("RecordRequestMetrics"))
 
@@ -124,7 +138,11 @@ func SetupStandardMiddlewareStack(ctx context.Context, router chi.Router, option
 	}
 
 	if options.RequestTimeoutSeconds > 0 {
-		timeout.RequestTimeoutSeconds = options.RequestTimeoutSeconds
+		if !options.SkipDuplicateSetup {
+			timeout.RequestTimeoutSeconds = options.RequestTimeoutSeconds
+		} else if timeout.RequestTimeoutSeconds != options.RequestTimeoutSeconds {
+			aulogging.Logger.Ctx(ctx).Warn().Print("Failed to set up request timeout for second web stack - timeouts cannot differ - timeout for both stacks remains set to %d seconds - continuing", timeout.RequestTimeoutSeconds)
+		}
 		router.Use(timeout.AddRequestTimeout)
 		router.Use(cancellogger.ConstructContextCancellationLoggerMiddleware("AddRequestTimeout"))
 	}

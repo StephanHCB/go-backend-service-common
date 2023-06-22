@@ -27,6 +27,10 @@ func BuildApmMiddleware(ctx context.Context, options ApmMiddlewareOptions) func(
 		}
 	}
 
+	return GetApmMiddlewareAfterSetup(ctx, options)
+}
+
+func GetApmMiddlewareAfterSetup(_ context.Context, _ ApmMiddlewareOptions) func(http.Handler) http.Handler {
 	return apmchiv5.Middleware()
 }
 
