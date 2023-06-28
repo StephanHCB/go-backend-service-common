@@ -17,7 +17,9 @@ type SwaggerCtlImpl struct{}
 func (c *SwaggerCtlImpl) WireUp(ctx context.Context, router chi.Router) {
 	// 	serve swagger-ui and openapi spec json (which needs to be in the file system of your container)
 	c.AddStaticHttpFilesystemRoute(router, auwebswaggerui.Assets, "/swagger-ui")
-	c.AddStaticSingleFileRoute(router, "docs", "openapi-v3-spec.json", "/")
+	if err := c.AddStaticSingleFileRoute(router, "docs", "openapi-v3-spec.json", "/"); err != nil {
+		_ = c.AddStaticSingleFileRoute(router, "api", "openapi-v3-spec.json", "/")
+	}
 	c.AddRedirect(router, "/v3/api-docs", "/openapi-v3-spec.json")
 }
 
@@ -26,8 +28,8 @@ func (c *SwaggerCtlImpl) WireUp(ctx context.Context, router chi.Router) {
 // inspired by https://github.com/go-chi/chi/blob/master/_examples/fileserver/main.go
 //
 // parameters:
-// - uriPath under which sub-url they should be served, if you leave out trailing slash, also adds a redirect
-//   example: "/swagger-ui"
+//   - uriPath under which sub-url they should be served, if you leave out trailing slash, also adds a redirect
+//     example: "/swagger-ui"
 func (c *SwaggerCtlImpl) AddStaticHttpFilesystemRoute(server chi.Router, fs http.FileSystem, uriPath string) {
 	strippedFs := http.StripPrefix(uriPath, http.FileServer(fs))
 
@@ -45,23 +47,23 @@ func (c *SwaggerCtlImpl) AddStaticHttpFilesystemRoute(server chi.Router, fs http
 // serve a single static file via a chi router
 //
 // parameters:
-// - relativeFilesystemPath where to find the file(s) to serve relative to the current working directory
-//   example: "docs"
-//   note: do NOT add a trailing slash
-// - filename which exact file to serve. This will be added to the route, so only exactly this file is made available
-//   example: "swagger.json"
-// - uriPath under which path the file should be served
-//   example: "/"
-//   Note: unfortunately it is not possible to use a different filename, as this is a direct filesystem directory server.
-//   That's why we have the redirect.
-func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFilesystemPath string, filename string, uriPath string) {
+//   - relativeFilesystemPath where to find the file(s) to serve relative to the current working directory
+//     example: "docs"
+//     note: do NOT add a trailing slash
+//   - filename which exact file to serve. This will be added to the route, so only exactly this file is made available
+//     example: "swagger.json"
+//   - uriPath under which path the file should be served
+//     example: "/"
+//     Note: unfortunately it is not possible to use a different filename, as this is a direct filesystem directory server.
+//     That's why we have the redirect.
+func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFilesystemPath string, filename string, uriPath string) error {
 	workDir, _ := os.Getwd()
 	filePath := filepath.Join(workDir, relativeFilesystemPath, filename)
 
 	contents, err := os.ReadFile(filePath)
 	if err != nil {
 		aulogging.Logger.NoCtx().Error().WithErr(err).Printf("failed to read file %s - skipping: %s", filePath, err.Error())
-		return
+		return err
 	}
 
 	if hasNoTrailingSlash(uriPath) {
@@ -74,6 +76,8 @@ func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFil
 		w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
 		_, _ = w.Write(contents)
 	})
+
+	return nil
 }
 
 func hasNoTrailingSlash(path string) bool {
