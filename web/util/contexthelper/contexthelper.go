@@ -109,7 +109,7 @@ func AsyncCopyRequestContext(sourceCtx context.Context, name string, traceTransa
 	return ctx, cancel
 }
 
-// AsyncProcessingSubContext creates a child context for asynchronous processing that is started
+// AsyncProcessingChildContext creates a child context for asynchronous processing that is started
 // from a previously running context.
 //
 // The difference to AsyncCopyRequestContext is that here the original context is expected to remain active,
@@ -128,7 +128,7 @@ func AsyncCopyRequestContext(sourceCtx context.Context, name string, traceTransa
 //	defer cancel()
 //
 // The returned cancel function will close the span, clean up, then finally cancel the context.
-func AsyncProcessingSubContext(sourceCtx context.Context, name string, traceSpanType string) (ctx context.Context, cancel context.CancelFunc) {
+func AsyncProcessingChildContext(sourceCtx context.Context, name string, traceSpanType string) (ctx context.Context, cancel context.CancelFunc) {
 	// here, the context IS a child
 	ctx = sourceCtx
 
