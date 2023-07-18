@@ -18,7 +18,9 @@ func (c *SwaggerCtlImpl) WireUp(ctx context.Context, router chi.Router) {
 	// 	serve swagger-ui and openapi spec json (which needs to be in the file system of your container)
 	c.AddStaticHttpFilesystemRoute(router, auwebswaggerui.Assets, "/swagger-ui")
 	if err := c.AddStaticSingleFileRoute(router, "docs", "openapi-v3-spec.json", "/"); err != nil {
-		_ = c.AddStaticSingleFileRoute(router, "api", "openapi-v3-spec.json", "/")
+		if err2 := c.AddStaticSingleFileRoute(router, "api", "openapi-v3-spec.json", "/"); err2 != nil {
+			aulogging.Logger.NoCtx().Error().Print("failed to read openAPI spec file, tried both docs/openapi-v3-spec.json and api/openapi-v3-spec.json. OpenAPI spec will be unavailable.")
+		}
 	}
 	c.AddRedirect(router, "/v3/api-docs", "/openapi-v3-spec.json")
 }
@@ -62,7 +64,7 @@ func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFil
 
 	contents, err := os.ReadFile(filePath)
 	if err != nil {
-		aulogging.Logger.NoCtx().Error().WithErr(err).Printf("failed to read file %s - skipping: %s", filePath, err.Error())
+		aulogging.Logger.NoCtx().Info().WithErr(err).Printf("failed to read file %s - skipping: %s", filePath, err.Error())
 		return err
 	}
 

@@ -3,10 +3,14 @@ package apmtracing
 import (
 	"context"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"github.com/StephanHCB/go-autumn-logging-zerolog/loggermiddleware"
 	auapmlogging "github.com/StephanHCB/go-autumn-restclient-apm/implementation/logging"
 	auapmmiddleware "github.com/StephanHCB/go-autumn-restclient-apm/implementation/middleware"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"go.elastic.co/apm/module/apmchiv5/v2"
+	"go.elastic.co/apm/v2"
 	"net/http"
 )
 
@@ -60,4 +64,70 @@ func customJsonLogField(name string, extractor func(context.Context) string) log
 			return extractor(r.Context())
 		},
 	}
+}
+
+// StartTransaction starts a completely new APM transaction and places it in the provided context.
+// Also places an APM enabled logger in the context, based on existing logger, if present.
+//
+// cancelFunc must be called via defer to close the transaction!
+func StartTransaction(ctx context.Context, name string, transactionType string) (context.Context, context.CancelFunc) {
+	tx := apm.DefaultTracer().StartTransaction(name, transactionType)
+	apmCtx := apm.ContextWithTransaction(ctx, tx)
+
+	sourceLogger := zerolog.Ctx(ctx)
+	if sourceLogger == nil {
+		sourceLogger = &log.Logger
+	}
+
+	traceLogger := addTransactionLoggerFields(apmCtx, *sourceLogger)
+	traceCtx := traceLogger.WithContext(apmCtx)
+
+	return traceCtx, func() {
+		tx.End()
+	}
+}
+
+// StartSpan starts a span for an already running APM transaction.
+// Also places an APM enabled logger in the context, based on existing logger, if present.
+func StartSpan(ctx context.Context, name string, spanType string) (context.Context, context.CancelFunc) {
+	span, spanCtx := apm.StartSpan(ctx, name, spanType)
+
+	sourceLogger := zerolog.Ctx(ctx)
+	if sourceLogger == nil {
+		sourceLogger = &log.Logger
+	}
+
+	traceLogger := addSpanLoggerFields(spanCtx, *sourceLogger)
+	traceCtx := traceLogger.WithContext(spanCtx)
+
+	return traceCtx, func() {
+		span.End()
+	}
+}
+
+func addTransactionLoggerFields(ctx context.Context, sourceLogger zerolog.Logger) zerolog.Logger {
+	builder := sourceLogger.With()
+	if auzerolog.IsJson {
+		if aulogging.RequestIdRetriever != nil {
+			requestId := aulogging.RequestIdRetriever(ctx)
+			builder = builder.Str(loggermiddleware.RequestIdFieldName, requestId)
+		}
+		// TODO log name in a suitable field? Might be useful!
+		builder = builder.Str(auapmlogging.TraceIdLogFieldName, auapmlogging.ExtractTraceId(ctx))
+		builder = builder.Str(auapmlogging.TransactionIdLogFieldName, auapmlogging.ExtractTransactionId(ctx))
+	} else {
+		// use request id field for trace id because plain logger does not support custom fields
+		builder = builder.Str(loggermiddleware.RequestIdFieldName, auapmlogging.ExtractTraceId(ctx))
+	}
+	sublogger := builder.Logger()
+	return sublogger
+}
+
+func addSpanLoggerFields(ctx context.Context, sourceLogger zerolog.Logger) zerolog.Logger {
+	builder := sourceLogger.With()
+	if auzerolog.IsJson {
+		builder = builder.Str(auapmlogging.SpanIdLogFieldName, auapmlogging.ExtractSpanId(ctx))
+	}
+	logger := builder.Logger()
+	return logger
 }
