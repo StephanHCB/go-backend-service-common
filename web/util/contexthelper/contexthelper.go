@@ -3,6 +3,7 @@ package contexthelper
 import (
 	"context"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	auapmlogging "github.com/StephanHCB/go-autumn-restclient-apm/implementation/logging"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/apmtracing"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
@@ -32,6 +33,9 @@ import (
 // The returned cancel function will close the transaction, clean up, then finally cancel the context.
 func StandaloneContext(name string, traceTransactionType string) (ctx context.Context, cancel context.CancelFunc) {
 	ctx = context.Background()
+
+	// provide logger in context
+	ctx = auzerolog.AddLoggerToCtx(ctx)
 
 	// child context so we do not cancel global context
 	var fullCancel context.CancelFunc
@@ -87,19 +91,20 @@ func AsyncCopyRequestContext(sourceCtx context.Context, name string, traceTransa
 		ctx = requestid.PutReqID(ctx, requestId)
 	}
 
-	// carry over current logger (if not present, apmtracing.StartTransaction will build on the default logger)
-	logger := zerolog.Ctx(sourceCtx)
-	if logger != nil {
-		ctx = logger.WithContext(ctx)
-	}
+	// provide fresh logger in context - the original one will have the wrong trace info
+	ctx = auzerolog.AddLoggerToCtx(ctx)
 
 	// start APM transaction, so we get a trace id, and add APM enabled logger to the context
 	var apmCancel context.CancelFunc
 	ctx, apmCancel = apmtracing.StartTransaction(ctx, name, traceTransactionType)
 
 	// log a line to link parent to child transaction
-	aulogging.Logger.Ctx(sourceCtx).Info().Printf("starting asynchronous transaction %s of type %s, trace.id %s",
+	aulogging.Logger.Ctx(sourceCtx).Info().Printf("starting asynchronous transaction %s of type %s, child trace.id %s",
 		name, traceTransactionType, auapmlogging.ExtractTraceId(ctx))
+
+	// log a line to link child to parent transaction
+	aulogging.Logger.Ctx(ctx).Info().Printf("started asynchronous transaction %s of type %s, coming from parent trace.id %s",
+		name, traceTransactionType, auapmlogging.ExtractTraceId(sourceCtx))
 
 	cancel = func() {
 		apmCancel()
