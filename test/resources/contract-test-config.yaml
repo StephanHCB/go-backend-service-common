@@ -1,8 +1,0 @@
-VAULT_SERVER: localhost
-VAULT_AUTH_TOKEN: notarealtoken
-VAULT_SECRETS_CONFIG: >-
-  {
-    "base/path/feat/some-service/secrets": [
-      {"vaultKey": "MY_SECRET", "configKey": "MY_CONFIG_KEY"}
-    ]
-  }

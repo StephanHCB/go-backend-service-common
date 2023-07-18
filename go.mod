@@ -19,11 +19,11 @@ require (
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/golang-jwt/jwt/v4 v4.5.0
-	github.com/pact-foundation/pact-go v1.7.0
 	github.com/prometheus/client_golang v1.16.0
 	github.com/rs/zerolog v1.29.1
 	github.com/stretchr/testify v1.8.4
 	go.elastic.co/apm/module/apmchiv5/v2 v2.4.3
+	go.elastic.co/apm/v2 v2.4.3
 )
 
 require (
@@ -34,8 +34,6 @@ require (
 	github.com/elastic/go-sysinfo v1.7.1 // indirect
 	github.com/elastic/go-windows v1.0.1 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/hashicorp/go-version v1.5.0 // indirect
-	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
@@ -50,7 +48,6 @@ require (
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
 	github.com/tidwall/tinylru v1.2.1 // indirect
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.3 // indirect
-	go.elastic.co/apm/v2 v2.4.3 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
