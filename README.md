@@ -18,6 +18,7 @@ This library provides:
   - incoming request metrics
   - incoming request timeouts
   - panic recovery
+  - apm tracing
 
 It aims to be compatible with a typical Spring microservice:
 
