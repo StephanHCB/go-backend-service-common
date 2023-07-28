@@ -58,6 +58,7 @@ type Configuration interface {
 	Platform() string
 
 	PlainLogging() bool
+	LogLevel() string
 
 	VaultServer() string
 	VaultCertificateFile() string

@@ -43,6 +43,7 @@ func (l *LoggingImpl) Setup() {
 		// keep these two consistent, if they do not match, the default request id shows in the logs rather than the APM trace IDs
 		loggermiddleware.RequestIdFieldName = auzerolog.RequestIdFieldName
 		auzerolog.SetupPlaintextLogging()
+		zerolog.SetGlobalLevel(l.logLevel())
 		aulogging.Logger.NoCtx().Info().Print("switching to developer friendly console log")
 	} else {
 		// stay with JSON logging and add ECS service.id field
@@ -66,7 +67,6 @@ func (l *LoggingImpl) CustomSetupJsonLogging(serviceName string) {
 		Str("service.name", serviceName).
 		Logger()
 
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	zerolog.LevelTraceValue = "TRACE"
 	zerolog.LevelDebugValue = "DEBUG"
 	zerolog.LevelInfoValue = "INFO"
@@ -74,11 +74,21 @@ func (l *LoggingImpl) CustomSetupJsonLogging(serviceName string) {
 	zerolog.LevelErrorValue = "ERROR"
 	zerolog.LevelFatalValue = "FATAL"
 	zerolog.LevelPanicValue = "FATAL"
+	zerolog.SetGlobalLevel(l.logLevel())
 
 	zerolog.TimestampFunc = func() time.Time { return time.Now().UTC() }
 	zerolog.TimeFieldFormat = "2006-01-02T15:04:05.000Z"
 
 	auzerolog.IsJson = true
+}
+
+func (l *LoggingImpl) logLevel() zerolog.Level {
+	level, err := zerolog.ParseLevel(l.Configuration.LogLevel())
+	if err != nil {
+		l.Logger().NoCtx().Warn().WithErr(err).Print("error parsing log level, setting level to INFO.")
+		level = zerolog.InfoLevel
+	}
+	return level
 }
 
 // alternative Setup function for testing that records log entries instead of writing them to console

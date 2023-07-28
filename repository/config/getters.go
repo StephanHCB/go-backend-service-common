@@ -34,6 +34,10 @@ func (c *ConfigImpl) PlainLogging() bool {
 	return c.VLogstyle == "plain"
 }
 
+func (c *ConfigImpl) LogLevel() string {
+	return c.VLoglevel
+}
+
 func (c *ConfigImpl) VaultServer() string {
 	return c.VVaultServer
 }
