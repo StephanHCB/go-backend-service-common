@@ -20,6 +20,7 @@ const (
 	KeyEnvironment          = "ENVIRONMENT"
 	KeyPlatform             = "PLATFORM"
 	KeyLogstyle             = "LOGSTYLE"
+	KeyLogLevel             = "LOG_LEVEL"
 	KeyVaultServer          = "VAULT_SERVER"
 	KeyVaultCertificateFile = "VAULT_CERTIFICATE_FILE"
 	// KeyVaultSecretPath deprecated please migrate to KeyVaultSecretsConfig
@@ -101,6 +102,12 @@ var PredefinedConfigItems = []auconfigapi.ConfigItem{
 		Default:     "ecs",
 		Description: "toggle between json ecs logging and plaintext logging (for local development)",
 		Validate:    auconfigenv.ObtainPatternValidator("^(plain|ecs)$"),
+	}, {
+		Key:         KeyLogLevel,
+		EnvName:     KeyLogLevel,
+		Default:     "INFO",
+		Description: "minimum level of logged messages",
+		Validate:    auconfigenv.ObtainPatternValidator("^[a-zA-Z]+$"),
 	}, {
 		Key:         KeyVaultServer,
 		EnvName:     KeyVaultServer,

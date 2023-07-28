@@ -22,6 +22,7 @@ type ConfigImpl struct {
 	VEnvironment       string
 	VPlatform          string
 	VLogstyle          string
+	VLoglevel          string
 	VVaultServer       string
 	VVaultCertFile     string
 	VVaultSecretPath   string
@@ -78,6 +79,7 @@ func (r *ConfigImpl) ObtainValuesNeededForLogging() {
 	r.VEnvironment = auconfigenv.Get(KeyEnvironment)
 	r.VPlatform = auconfigenv.Get(KeyPlatform)
 	r.VLogstyle = auconfigenv.Get(KeyLogstyle)
+	r.VLoglevel = auconfigenv.Get(KeyLogLevel)
 }
 
 func (r *ConfigImpl) ObtainPredefinedValues() {
@@ -86,6 +88,7 @@ func (r *ConfigImpl) ObtainPredefinedValues() {
 	r.VEnvironment = auconfigenv.Get(KeyEnvironment)
 	r.VPlatform = auconfigenv.Get(KeyPlatform)
 	r.VLogstyle = auconfigenv.Get(KeyLogstyle)
+	r.VLoglevel = auconfigenv.Get(KeyLogLevel)
 	r.VVaultServer = auconfigenv.Get(KeyVaultServer)
 	r.VVaultCertFile = auconfigenv.Get(KeyVaultCertificateFile)
 	r.VVaultSecretPath = auconfigenv.Get(KeyVaultSecretPath)
