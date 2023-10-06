@@ -22,7 +22,11 @@ func (r *ConfigImpl) AcornName() string {
 }
 
 func (r *ConfigImpl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
-	r.Logging = registry.GetAcornByName(repository.LoggingAcornName).(repository.Logging)
+	return r.Assemble(registry.GetAcornByName(repository.LoggingAcornName).(repository.Logging))
+}
+
+func (r *ConfigImpl) Assemble(logging repository.Logging) error {
+	r.Logging = logging
 
 	// load the configuration, so it is available for logging setup (but don't validate it yet)
 	if err := r.Read(); err != nil {
@@ -44,6 +48,10 @@ func (r *ConfigImpl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 
+	return r.Setup()
+}
+
+func (r *ConfigImpl) Setup() error {
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
 
 	if err := r.Validate(ctx); err != nil {

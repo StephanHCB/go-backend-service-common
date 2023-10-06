@@ -15,6 +15,28 @@ func New() auacornapi.Acorn {
 	}
 }
 
+// NewNoAcorn wires up the component, but does not set it up.
+//
+// You will still need to call Setup(), which injects configuration values before they are validated.
+// This means, you must call Setup() for vault before you call Setup() for the configuration.
+//
+// All in all, the call order with Vault needs to be:
+//   - c := config.NewNoAcorn(...)
+//   - l := logging.NewNoAcorn(c)
+//   - v := vault.NewNoAcorn(c, l)
+//   - c.Assemble(l)
+//   - l.Setup()
+//   - v.Execute()
+//   - c.Setup()
+func NewNoAcorn(configuration repository.Configuration, logging repository.Logging) repository.Vault {
+	return &Impl{
+		VaultProtocol: "https",
+
+		Configuration: configuration,
+		Logging:       logging,
+	}
+}
+
 func (v *Impl) IsVault() bool {
 	return true
 }
@@ -35,6 +57,10 @@ func (v *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 
+	return v.Execute()
+}
+
+func (v *Impl) Execute() error {
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
 
 	if err := v.Validate(ctx); err != nil {

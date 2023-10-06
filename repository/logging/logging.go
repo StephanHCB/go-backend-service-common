@@ -49,6 +49,8 @@ func (l *LoggingImpl) Setup() {
 		// stay with JSON logging and add ECS service.id field
 		l.CustomSetupJsonLogging(l.Configuration.ApplicationName())
 	}
+
+	l.Logger().NoCtx().Info().Print("logging is now available")
 }
 
 func (l *LoggingImpl) loggingCallback(_ context.Context, level string, _ string, _ error, _ map[string]string) {
