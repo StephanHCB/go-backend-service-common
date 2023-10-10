@@ -2,6 +2,7 @@ package vault
 
 import (
 	"context"
+	"errors"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -26,7 +27,7 @@ func New() auacornapi.Acorn {
 //   - v := vault.NewNoAcorn(c, l)
 //   - c.Assemble(l)
 //   - l.Setup()
-//   - v.Execute()
+//   - vault.Execute(v)
 //   - c.Setup()
 func NewNoAcorn(configuration repository.Configuration, logging repository.Logging) repository.Vault {
 	return &Impl{
@@ -57,11 +58,19 @@ func (v *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 
-	return v.Execute()
+	return Execute(v)
 }
 
-func (v *Impl) Execute() error {
+// setup convenience function for no acorn setup
+
+func Execute(vaultComponent repository.Vault) error {
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	v, ok := vaultComponent.(*Impl)
+	if !ok {
+		v.Logging.Logger().Ctx(ctx).Error().Print("received invalid component as vault client. You can only call Execute() on a vault instance. BAILING OUT")
+		return errors.New("not a vault component instance - cannot run full setup on mocks")
+	}
 
 	if err := v.Validate(ctx); err != nil {
 		return err
