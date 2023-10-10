@@ -95,7 +95,7 @@ var PredefinedConfigItems = []auconfigapi.ConfigItem{
 		EnvName:     KeyPlatform,
 		Default:     "",
 		Description: "platform, used for vault secret lookups etc.",
-		Validate:    auconfigenv.ObtainPatternValidator("^[a-z]+$"),
+		Validate:    auconfigenv.ObtainPatternValidator("^[a-z]*$"),
 	}, {
 		Key:         KeyLogstyle,
 		EnvName:     KeyLogstyle,

@@ -76,7 +76,7 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 
 	_, err := tstSetupCutAndLogRecorder(t, "invalid-config-values.yaml")
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 8 error(s). See details above")
+	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 7 error(s). See details above")
 
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 
