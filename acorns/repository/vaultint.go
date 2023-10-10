@@ -10,9 +10,7 @@ const VaultAcornName = "vault"
 type Vault interface {
 	IsVault() bool
 
-	// Execute performs Setup, Authenticate, ObtainSecrets with logging, using the configuration.
-	// If successful, it injects config values into the configuration, unless vault is disabled in the configuration.
-	Execute() error
+	// see the vault.Execute implementation to see how to use these methods together with the configuration.
 
 	// Setup uses the configuration
 	Setup(ctx context.Context) error
