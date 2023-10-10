@@ -20,7 +20,7 @@ require (
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/prometheus/client_golang v1.17.0
-	github.com/rs/zerolog v1.29.1
+	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
 	go.elastic.co/apm/module/apmchiv5/v2 v2.4.3
 	go.elastic.co/apm/v2 v2.4.3
@@ -35,8 +35,8 @@ require (
 	github.com/elastic/go-windows v1.0.1 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
-	github.com/mattn/go-colorable v0.1.12 // indirect
-	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -48,7 +48,7 @@ require (
 	github.com/tidwall/tinylru v1.2.1 // indirect
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.3 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
