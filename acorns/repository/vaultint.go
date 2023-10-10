@@ -10,6 +10,8 @@ const VaultAcornName = "vault"
 type Vault interface {
 	IsVault() bool
 
+	// see the vault.Execute implementation to see how to use these methods together with the configuration.
+
 	// Setup uses the configuration
 	Setup(ctx context.Context) error
 

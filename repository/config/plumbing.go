@@ -40,9 +40,27 @@ type ConfigImpl struct {
 
 // New initially creates the instance with no logging (circular dependency)
 func New(customConfig repository.CustomConfiguration, additionalConfigItems []auconfigapi.ConfigItem) auacornapi.Acorn {
-	instance := &ConfigImpl{
-		CustomConfiguration: customConfig,
-	}
+	instance := &ConfigImpl{}
+	instance.construct(customConfig, additionalConfigItems)
+	return instance
+}
+
+// NewNoAcorn initially creates the instance with no logging (circular dependency) - no acorn version
+//
+// This does not fully wire up the component. Here's what you need to do in this order to get logging and configuration:
+//   - c := config.NewNoAcorn(...)
+//   - l := logging.NewNoAcorn(c)
+//   - c.Assemble(l)
+//   - l.Setup()
+//   - c.Setup()
+func NewNoAcorn(customConfig repository.CustomConfiguration, additionalConfigItems []auconfigapi.ConfigItem) repository.Configuration {
+	instance := &ConfigImpl{}
+	instance.construct(customConfig, additionalConfigItems)
+	return instance
+}
+
+func (r *ConfigImpl) construct(customConfig repository.CustomConfiguration, additionalConfigItems []auconfigapi.ConfigItem) {
+	r.CustomConfiguration = customConfig
 
 	allConfigItems := PredefinedConfigItems
 	for _, item := range additionalConfigItems {
@@ -50,8 +68,8 @@ func New(customConfig repository.CustomConfiguration, additionalConfigItems []au
 	}
 
 	warnFunc := func(message string) {
-		if instance.Logging != nil && instance.validationContext != nil {
-			instance.Logging.Logger().Ctx(instance.validationContext).Error().Print(message)
+		if r.Logging != nil && r.validationContext != nil {
+			r.Logging.Logger().Ctx(r.validationContext).Error().Print(message)
 		}
 	}
 
@@ -61,8 +79,6 @@ func New(customConfig repository.CustomConfiguration, additionalConfigItems []au
 		auzerolog.SetupJsonLogging(ApplicationName)
 		aulogging.Logger.NoCtx().Fatal().WithErr(err).Print("failed to read configuration defaults from code - only strings are supported! BAILING OUT")
 	}
-
-	return instance
 }
 
 func (r *ConfigImpl) Read() error {

@@ -10,6 +10,13 @@ func New() auacornapi.Acorn {
 	return &TimestampImpl{}
 }
 
+// NewNoAcorn replaces everything in the full Acorn lifecycle for this component, no need to call anything else.
+func NewNoAcorn(nowFunc func() time.Time) repository.Timestamp {
+	return &TimestampImpl{
+		Timestamp: nowFunc,
+	}
+}
+
 func (r *TimestampImpl) IsTimestamp() bool {
 	return true
 }

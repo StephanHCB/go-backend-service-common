@@ -11,6 +11,15 @@ func New() auacornapi.Acorn {
 	return &LoggingImpl{}
 }
 
+// NewNoAcorn constructs and assembles the component, but it cannot set it up yet.
+//
+// You still need to call Setup() after the configuration was loaded (but not validated)
+func NewNoAcorn(configuration repository.Configuration) repository.Logging {
+	return &LoggingImpl{
+		Configuration: configuration,
+	}
+}
+
 func (r *LoggingImpl) IsLogging() bool {
 	return true
 }
@@ -29,7 +38,6 @@ func (r *LoggingImpl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 	// configuration was loaded (but not validated) during Assemble
 
 	r.Setup()
-	r.Logger().NoCtx().Info().Print("logging is now available")
 
 	return nil
 }

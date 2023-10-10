@@ -11,6 +11,11 @@ func New() auacornapi.Acorn {
 	return &SwaggerCtlImpl{}
 }
 
+// NewNoAcorn performs the full Acorn lifecycle for this component, no further setup necessary
+func NewNoAcorn() controller.SwaggerController {
+	return &SwaggerCtlImpl{}
+}
+
 func (a *SwaggerCtlImpl) IsSwaggerController() bool {
 	return true
 }

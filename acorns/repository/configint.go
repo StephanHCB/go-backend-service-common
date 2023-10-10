@@ -46,6 +46,11 @@ type Configuration interface {
 	// time you need a configuration value.
 	Custom() CustomConfiguration
 
+	// expose no-acorn setup operations
+
+	Assemble(logging Logging) error
+	Setup() error
+
 	// accessors for common configuration properties which are always provided for you
 
 	ApplicationName() string
