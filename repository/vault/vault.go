@@ -2,6 +2,7 @@ package vault
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
@@ -13,6 +14,7 @@ import (
 	"github.com/go-http-utils/headers"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -172,7 +174,15 @@ func (v *Impl) ObtainSecrets(ctx context.Context) error {
 				if secretConfig.ConfigKey != nil && *secretConfig.ConfigKey != "" {
 					configKey = *secretConfig.ConfigKey
 				}
-				auconfigenv.Set(configKey, secret)
+				if keys := strings.Split(configKey, "."); len(keys) > 1 {
+					secretsMap, err := appendSecretToMap(auconfigenv.Get(keys[0]), keys[1], secret)
+					if err != nil {
+						return fmt.Errorf("nested secret key %s from vault path %s is not valid", configKey, path)
+					}
+					auconfigenv.Set(keys[0], secretsMap)
+				} else {
+					auconfigenv.Set(configKey, secret)
+				}
 			} else {
 				return fmt.Errorf("key %s does not exist at vault path %s", vaultKey, path)
 			}
@@ -215,4 +225,16 @@ func (v *Impl) lowlevelObtainSecrets(ctx context.Context, fullSecretsPath string
 	}
 
 	return responseDto.Data.Data, nil
+}
+
+func appendSecretToMap(secretMapJson string, secretKey string, secretValue string) (string, error) {
+	secretMap := make(map[string]string)
+	if secretMapJson != "" {
+		if err := json.Unmarshal([]byte(secretMapJson), &secretMap); err != nil {
+			return "{}", err
+		}
+	}
+	secretMap[secretKey] = secretValue
+	result, err := json.Marshal(secretMap)
+	return string(result), err
 }
