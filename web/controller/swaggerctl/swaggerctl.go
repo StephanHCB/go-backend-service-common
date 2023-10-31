@@ -2,6 +2,7 @@ package swaggerctl
 
 import (
 	"context"
+	"fmt"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auwebswaggerui "github.com/StephanHCB/go-autumn-web-swagger-ui"
 	"github.com/StephanHCB/go-backend-service-common/web/util/media"
@@ -10,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 )
 
 type SwaggerCtlImpl struct{}
@@ -17,12 +19,14 @@ type SwaggerCtlImpl struct{}
 func (c *SwaggerCtlImpl) WireUp(ctx context.Context, router chi.Router) {
 	// 	serve swagger-ui and openapi spec json (which needs to be in the file system of your container)
 	c.AddStaticHttpFilesystemRoute(router, auwebswaggerui.Assets, "/swagger-ui")
-	if err := c.AddStaticSingleFileRoute(router, "docs", "openapi-v3-spec.json", "/"); err != nil {
-		if err2 := c.AddStaticSingleFileRoute(router, "api", "openapi-v3-spec.json", "/"); err2 != nil {
-			aulogging.Logger.NoCtx().Error().Print("failed to read openAPI spec file, tried both docs/openapi-v3-spec.json and api/openapi-v3-spec.json. OpenAPI spec will be unavailable.")
-		}
+	matchingFile, fileFindError := c.GetFirstMatchingFile([]string{"docs", "api"}, regexp.MustCompile(`openapi-v3-spec\.(json|yaml)`))
+	if fileFindError != nil {
+		aulogging.Logger.NoCtx().Error().Print("failed to find openAPI spec file. OpenAPI spec will be unavailable.")
 	}
-	c.AddRedirect(router, "/v3/api-docs", "/openapi-v3-spec.json")
+	if err := c.AddStaticSingleFileRoute(router, matchingFile.relativeFilesystemPath, matchingFile.fileName, "/"); fileFindError == nil && err != nil {
+		aulogging.Logger.NoCtx().Error().Printf("failed to read openAPI spec file %s/%s. OpenAPI spec will be unavailable.", matchingFile.relativeFilesystemPath, matchingFile.fileName)
+	}
+	c.AddRedirect(router, "/v3/api-docs", fmt.Sprintf("/%s", matchingFile.fileName))
 }
 
 // serve static files from an http.FileSystem instance via a chi router
@@ -80,6 +84,39 @@ func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFil
 	})
 
 	return nil
+}
+
+type MatchingFile struct {
+	relativeFilesystemPath string
+	fileName               string
+}
+
+// returns the first file from workdir whose path match a given regex
+//
+// parameters:
+//   - fileMatcher a regular expression used to filter the files
+func (c *SwaggerCtlImpl) GetFirstMatchingFile(relativeFilesystemPaths []string, fileMatcher *regexp.Regexp) (MatchingFile, error) {
+	workDir, _ := os.Getwd()
+	for _, relativeFilesystemPath := range relativeFilesystemPaths {
+		dirPath := filepath.Join(workDir, relativeFilesystemPath)
+
+		contents, err := os.ReadDir(dirPath)
+		if err != nil {
+			aulogging.Logger.NoCtx().Info().WithErr(err).Printf("failed to read directory %s - skipping directory", dirPath)
+			continue
+		}
+
+		for _, element := range contents {
+			if !element.IsDir() && fileMatcher != nil && fileMatcher.MatchString(element.Name()) {
+				return MatchingFile{
+					relativeFilesystemPath: relativeFilesystemPath,
+					fileName:               element.Name(),
+				}, nil
+			}
+		}
+
+	}
+	return MatchingFile{}, fmt.Errorf("no matching file found in working directory")
 }
 
 func hasNoTrailingSlash(path string) bool {
