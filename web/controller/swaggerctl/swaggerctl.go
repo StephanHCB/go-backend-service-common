@@ -2,27 +2,40 @@ package swaggerctl
 
 import (
 	"context"
+	"fmt"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auwebswaggerui "github.com/StephanHCB/go-autumn-web-swagger-ui"
+	"github.com/StephanHCB/go-backend-service-common/acorns/controller"
 	"github.com/StephanHCB/go-backend-service-common/web/util/media"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-http-utils/headers"
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 )
 
 type SwaggerCtlImpl struct{}
 
-func (c *SwaggerCtlImpl) WireUp(ctx context.Context, router chi.Router) {
+func (c *SwaggerCtlImpl) WireUp(ctx context.Context, router chi.Router, additionalSpecFiles ...controller.SpecFile) {
 	// 	serve swagger-ui and openapi spec json (which needs to be in the file system of your container)
 	c.AddStaticHttpFilesystemRoute(router, auwebswaggerui.Assets, "/swagger-ui")
-	if err := c.AddStaticSingleFileRoute(router, "docs", "openapi-v3-spec.json", "/"); err != nil {
-		if err2 := c.AddStaticSingleFileRoute(router, "api", "openapi-v3-spec.json", "/"); err2 != nil {
-			aulogging.Logger.NoCtx().Error().Print("failed to read openAPI spec file, tried both docs/openapi-v3-spec.json and api/openapi-v3-spec.json. OpenAPI spec will be unavailable.")
+	openApiSpecFile, fileFindError := c.GetFirstMatchingServableFile([]string{"docs", "api"}, regexp.MustCompile(`openapi-v3-spec\.(json|yaml)`))
+	if fileFindError != nil {
+		aulogging.Logger.NoCtx().Error().Print("failed to find openAPI spec file. OpenAPI spec will be unavailable.")
+	}
+	if err := c.AddStaticFileRoute(router, openApiSpecFile); fileFindError == nil && err != nil {
+		aulogging.Logger.NoCtx().Error().Printf("failed to read openAPI spec file %s/%s. OpenAPI spec will be unavailable.", openApiSpecFile.RelativeFilesystemPath, openApiSpecFile.FileName)
+	}
+
+	for _, additionalFile := range additionalSpecFiles {
+		if err := c.AddStaticFileRoute(router, additionalFile); fileFindError == nil && err != nil {
+			aulogging.Logger.NoCtx().Error().Printf("failed to read spec file %s/%s. OpenAPI spec will be broken.", additionalFile.RelativeFilesystemPath, additionalFile.FileName)
 		}
 	}
-	c.AddRedirect(router, "/v3/api-docs", "/openapi-v3-spec.json")
+
+	c.AddRedirect(router, "/v3/api-docs", fmt.Sprintf("/%s", openApiSpecFile.FileName))
 }
 
 // serve static files from an http.FileSystem instance via a chi router
@@ -49,18 +62,10 @@ func (c *SwaggerCtlImpl) AddStaticHttpFilesystemRoute(server chi.Router, fs http
 // serve a single static file via a chi router
 //
 // parameters:
-//   - relativeFilesystemPath where to find the file(s) to serve relative to the current working directory
-//     example: "docs"
-//     note: do NOT add a trailing slash
-//   - filename which exact file to serve. This will be added to the route, so only exactly this file is made available
-//     example: "swagger.json"
-//   - uriPath under which path the file should be served
-//     example: "/"
-//     Note: unfortunately it is not possible to use a different filename, as this is a direct filesystem directory server.
-//     That's why we have the redirect.
-func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFilesystemPath string, filename string, uriPath string) error {
+//   - specFile describes the spec file to serve. UriPath defaults to "/" if empty.
+func (c *SwaggerCtlImpl) AddStaticFileRoute(server chi.Router, specFile controller.SpecFile) error {
 	workDir, _ := os.Getwd()
-	filePath := filepath.Join(workDir, relativeFilesystemPath, filename)
+	filePath := filepath.Join(workDir, specFile.RelativeFilesystemPath, specFile.FileName)
 
 	contents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -68,11 +73,11 @@ func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFil
 		return err
 	}
 
-	if hasNoTrailingSlash(uriPath) {
-		uriPath += "/"
+	if hasNoTrailingSlash(specFile.UriPath) {
+		specFile.UriPath = specFile.UriPath + "/"
 	}
 
-	server.Get(uriPath+filename, func(w http.ResponseWriter, r *http.Request) {
+	server.Get(specFile.UriPath+specFile.FileName, func(w http.ResponseWriter, r *http.Request) {
 		// this stops browsers from caching our swagger.json
 		w.Header().Set(headers.CacheControl, "no-cache")
 		w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
@@ -82,8 +87,36 @@ func (c *SwaggerCtlImpl) AddStaticSingleFileRoute(server chi.Router, relativeFil
 	return nil
 }
 
+// returns the first file from workdir whose path match a given regex
+//
+// parameters:
+//   - fileMatcher a regular expression used to filter the files
+func (c *SwaggerCtlImpl) GetFirstMatchingServableFile(relativeFilesystemPaths []string, fileMatcher *regexp.Regexp) (controller.SpecFile, error) {
+	workDir, _ := os.Getwd()
+	for _, relativeFilesystemPath := range relativeFilesystemPaths {
+		dirPath := filepath.Join(workDir, relativeFilesystemPath)
+
+		contents, err := os.ReadDir(dirPath)
+		if err != nil {
+			aulogging.Logger.NoCtx().Info().WithErr(err).Printf("failed to read directory %s - skipping directory", dirPath)
+			continue
+		}
+
+		for _, element := range contents {
+			if !element.IsDir() && fileMatcher != nil && fileMatcher.MatchString(element.Name()) {
+				return controller.SpecFile{
+					RelativeFilesystemPath: relativeFilesystemPath,
+					FileName:               element.Name(),
+				}, nil
+			}
+		}
+
+	}
+	return controller.SpecFile{}, fmt.Errorf("no file matching %s found in relative paths %s", fileMatcher.String(), strings.Join(relativeFilesystemPaths, ", "))
+}
+
 func hasNoTrailingSlash(path string) bool {
-	return path != "/" && path[len(path)-1] != '/'
+	return len(path) == 0 || path[len(path)-1] != '/'
 }
 
 func (c *SwaggerCtlImpl) AddRedirect(server chi.Router, source string, target string) {
