@@ -102,8 +102,8 @@ go.elastic.co/apm/module/apmchiv5/v2 v2.4.5 h1:1HCImhPw5E0Zvv1Bl2jArWcTe5750fxw3
 go.elastic.co/apm/module/apmchiv5/v2 v2.4.5/go.mod h1:978051bqdJL8+t+ujDs185V4DhDu7SWE3LETLQozNu4=
 go.elastic.co/apm/module/apmhttp/v2 v2.4.5 h1:t51CtOQdn6KSp11wNb0PxnhH09TjE+V4ajU8bqkLxmg=
 go.elastic.co/apm/module/apmhttp/v2 v2.4.5/go.mod h1:dmgyWIKzVk76gSgOWkTmPcSCqjRl7dfjWbBzFq8W3y0=
-go.elastic.co/apm/v2 v2.4.5 h1:+01xPucS6YazBMYxbTSwNEsV9sgznFC0WW7x5dzxyPg=
-go.elastic.co/apm/v2 v2.4.5/go.mod h1:+CiBUdrrAGnGCL9TNx7tQz3BrfYV23L8Ljvotoc87so=
+go.elastic.co/apm/v2 v2.4.6 h1:q4OSaOEbeITSaWHONyX7eVnnpW6nRnjgJuPQz7LTwv0=
+go.elastic.co/apm/v2 v2.4.6/go.mod h1:+CiBUdrrAGnGCL9TNx7tQz3BrfYV23L8Ljvotoc87so=
 go.elastic.co/fastjson v1.1.0 h1:3MrGBWWVIxe/xvsbpghtkFoPciPhOCmjsR/HfwEeQR4=
 go.elastic.co/fastjson v1.1.0/go.mod h1:boNGISWMjQsUPy/t6yqt2/1Wx4YNPSe+mZjlyw9vKKI=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
