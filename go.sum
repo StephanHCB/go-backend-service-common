@@ -98,8 +98,8 @@ github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXl
 github.com/tidwall/tinylru v1.2.1 h1:VgBr72c2IEr+V+pCdkPZUwiQ0KJknnWIYbhxAVkYfQk=
 github.com/tidwall/tinylru v1.2.1/go.mod h1:9bQnEduwB6inr2Y7AkBP7JPgCkyrhTV/ZpX0oOOpBI4=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
-go.elastic.co/apm/module/apmchiv5/v2 v2.4.5 h1:1HCImhPw5E0Zvv1Bl2jArWcTe5750fxw3TjoJ7l+qe0=
-go.elastic.co/apm/module/apmchiv5/v2 v2.4.5/go.mod h1:978051bqdJL8+t+ujDs185V4DhDu7SWE3LETLQozNu4=
+go.elastic.co/apm/module/apmchiv5/v2 v2.4.6 h1:WaU0qjBb8Z4gUwVYmqK8NU3yheXRUA0LmTfV8op200A=
+go.elastic.co/apm/module/apmchiv5/v2 v2.4.6/go.mod h1:978051bqdJL8+t+ujDs185V4DhDu7SWE3LETLQozNu4=
 go.elastic.co/apm/module/apmhttp/v2 v2.4.5 h1:t51CtOQdn6KSp11wNb0PxnhH09TjE+V4ajU8bqkLxmg=
 go.elastic.co/apm/module/apmhttp/v2 v2.4.5/go.mod h1:dmgyWIKzVk76gSgOWkTmPcSCqjRl7dfjWbBzFq8W3y0=
 go.elastic.co/apm/v2 v2.4.5 h1:+01xPucS6YazBMYxbTSwNEsV9sgznFC0WW7x5dzxyPg=
