@@ -12,6 +12,11 @@ import (
 	"go.elastic.co/apm/v2"
 )
 
+type Options struct {
+	//silent suppresses logging output
+	Silent bool
+}
+
 // regarding APM tracing, see here:
 // https://github.com/StephanHCB/go-autumn-restclient-apm#example-integration-into-go-autumn-chi-service
 
@@ -79,6 +84,31 @@ func StandaloneContext(name string, traceTransactionType string) (ctx context.Co
 //
 // The returned cancel function will close the span, clean up, then finally cancel the context.
 func AsyncCopyRequestContext(sourceCtx context.Context, name string, traceTransactionType string) (ctx context.Context, cancel context.CancelFunc) {
+	return AsyncCopyRequestContextWithOptions(sourceCtx, name, traceTransactionType, Options{})
+}
+
+// AsyncCopyRequestContextWithOptions creates a fully configured context for asynchronous processing that is started
+// by a web request, or from a previously generated standalone context.
+//
+// The context is built as a child of context.Background(), using information from sourceCtx.
+// This means, cancellation of sourceCtx will not cancel the returned context. Logger and request id are copied over.
+// We also start a new tracing transaction, logging a line to link it to the old transaction.
+//
+// Note: we cannot just create a span under the original transaction, because it will end when the original
+// request completes, which would end all spans.
+//
+// name is used as the name for the trace transaction.
+//
+// traceTransactionType is used as the trace transaction type. Typical values are "scheduled", "request",
+// "backgroundJob". See https://www.elastic.co/guide/en/apm/guide/current/data-model-transactions.html for details.
+//
+// Usage example:
+//
+//	ctx, cancel := contexthelper.AsyncCopyRequestContextWithOptions(r.Context(), "Async Webhook Reply 1", "request", contexthelper.Options{})
+//	defer cancel()
+//
+// The returned cancel function will close the span, clean up, then finally cancel the context.
+func AsyncCopyRequestContextWithOptions(sourceCtx context.Context, name string, traceTransactionType string, opts Options) (ctx context.Context, cancel context.CancelFunc) {
 	ctx = context.Background()
 
 	// child context so we do not cancel global context
@@ -98,13 +128,15 @@ func AsyncCopyRequestContext(sourceCtx context.Context, name string, traceTransa
 	var apmCancel context.CancelFunc
 	ctx, apmCancel = apmtracing.StartTransaction(ctx, name, traceTransactionType)
 
-	// log a line to link parent to child transaction
-	aulogging.Logger.Ctx(sourceCtx).Info().Printf("starting asynchronous transaction %s of type %s, child trace.id %s",
-		name, traceTransactionType, auapmlogging.ExtractTraceId(ctx))
+	if !opts.Silent {
+		// log a line to link parent to child transaction
+		aulogging.Logger.Ctx(sourceCtx).Info().Printf("starting asynchronous transaction %s of type %s, child trace.id %s",
+			name, traceTransactionType, auapmlogging.ExtractTraceId(ctx))
 
-	// log a line to link child to parent transaction
-	aulogging.Logger.Ctx(ctx).Info().Printf("started asynchronous transaction %s of type %s, coming from parent trace.id %s",
-		name, traceTransactionType, auapmlogging.ExtractTraceId(sourceCtx))
+		// log a line to link child to parent transaction
+		aulogging.Logger.Ctx(ctx).Info().Printf("started asynchronous transaction %s of type %s, coming from parent trace.id %s",
+			name, traceTransactionType, auapmlogging.ExtractTraceId(sourceCtx))
+	}
 
 	cancel = func() {
 		apmCancel()
