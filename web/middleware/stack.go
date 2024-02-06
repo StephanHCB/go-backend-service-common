@@ -56,6 +56,8 @@ type MiddlewareStackOptions struct {
 	//
 	// Some setup cannot be run multiple times, e.g. metrics registration panics on duplicates
 	SkipDuplicateSetup bool
+
+	RequestLoggingOptions requestlogging.Options
 }
 
 func SetupStandardMiddlewareStack(ctx context.Context, router chi.Router, options MiddlewareStackOptions) error {
@@ -84,7 +86,7 @@ func SetupStandardMiddlewareStack(ctx context.Context, router chi.Router, option
 	router.Use(cancellogger.ConstructContextCancellationLoggerMiddleware("AddZerologLogger"))
 
 	if !options.SkipDuplicateSetup {
-		requestlogging.Setup()
+		requestlogging.Setup(options.RequestLoggingOptions)
 	}
 	router.Use(chimiddleware.Logger)
 	router.Use(cancellogger.ConstructContextCancellationLoggerMiddleware("Logger"))
