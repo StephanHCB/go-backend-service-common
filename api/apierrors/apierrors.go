@@ -66,6 +66,14 @@ func IsNotFoundError(err error) bool {
 	return isAnnotatedErrorWithStatus(err, http.StatusNotFound)
 }
 
+func NewUnprocessableEntity(message string, details string, wrapped error, timestamp time.Time) AnnotatedError {
+	return create(message, details, http.StatusUnprocessableEntity, wrapped, timestamp)
+}
+
+func IsUnprocessableEntity(err error) bool {
+	return isAnnotatedErrorWithStatus(err, http.StatusUnprocessableEntity)
+}
+
 func NewUnauthorisedError(message string, details string, wrapped error, timestamp time.Time) AnnotatedError {
 	return create(message, details, http.StatusUnauthorized, wrapped, timestamp)
 }
