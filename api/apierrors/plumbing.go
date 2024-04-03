@@ -1,6 +1,7 @@
 package apierrors
 
 import (
+	"errors"
 	"github.com/StephanHCB/go-backend-service-common/api"
 	"time"
 )
@@ -66,7 +67,8 @@ func createWithResponse(message string, details string, status int, wrapped erro
 }
 
 func isAnnotatedErrorWithStatus(err error, status int) bool {
-	ann, ok := err.(AnnotatedError)
+	var ann AnnotatedError
+	ok := errors.As(err, &ann)
 	if !ok {
 		return false
 	}
