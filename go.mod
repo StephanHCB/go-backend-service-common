@@ -9,20 +9,20 @@ toolchain go1.22.3
 exclude github.com/prometheus/client_golang v1.11.0
 
 require (
-	github.com/StephanHCB/go-autumn-acorn-registry v0.3.1
-	github.com/StephanHCB/go-autumn-config-api v0.2.1
-	github.com/StephanHCB/go-autumn-config-env v0.2.2
-	github.com/StephanHCB/go-autumn-logging v0.3.0
-	github.com/StephanHCB/go-autumn-logging-zerolog v0.5.0
-	github.com/StephanHCB/go-autumn-restclient v0.8.0
-	github.com/StephanHCB/go-autumn-restclient-apm v0.1.0
-	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
-	github.com/StephanHCB/go-autumn-web-swagger-ui v0.3.2
-	github.com/go-chi/chi/v5 v5.0.12
+	github.com/StephanHCB/go-autumn-acorn-registry v0.3.2
+	github.com/StephanHCB/go-autumn-config-api v0.2.2
+	github.com/StephanHCB/go-autumn-config-env v0.2.3
+	github.com/StephanHCB/go-autumn-logging v0.4.0
+	github.com/StephanHCB/go-autumn-logging-zerolog v0.6.0
+	github.com/StephanHCB/go-autumn-restclient v0.8.1
+	github.com/StephanHCB/go-autumn-restclient-apm v0.2.0
+	github.com/StephanHCB/go-autumn-restclient-prometheus v0.2.0
+	github.com/StephanHCB/go-autumn-web-swagger-ui v0.3.3
+	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/prometheus/client_golang v1.19.1
-	github.com/rs/zerolog v1.32.0
+	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
 	go.elastic.co/apm/module/apmchiv5/v2 v2.6.0
 	go.elastic.co/apm/v2 v2.6.0
