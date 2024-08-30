@@ -24,8 +24,8 @@ require (
 	github.com/prometheus/client_golang v1.20.0
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
-	go.elastic.co/apm/module/apmchiv5/v2 v2.6.0
-	go.elastic.co/apm/v2 v2.6.0
+	go.elastic.co/apm/module/apmchiv5/v2 v2.6.2
+	go.elastic.co/apm/v2 v2.6.2
 )
 
 require (
@@ -47,7 +47,7 @@ require (
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
 	github.com/tidwall/tinylru v1.2.1 // indirect
-	go.elastic.co/apm/module/apmhttp/v2 v2.6.0 // indirect
+	go.elastic.co/apm/module/apmhttp/v2 v2.6.2 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
