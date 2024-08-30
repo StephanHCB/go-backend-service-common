@@ -25,7 +25,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
 	go.elastic.co/apm/module/apmchiv5/v2 v2.6.0
-	go.elastic.co/apm/v2 v2.6.0
+	go.elastic.co/apm/v2 v2.6.2
 )
 
 require (
